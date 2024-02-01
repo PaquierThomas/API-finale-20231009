@@ -2,7 +2,7 @@ const sqlite3 = require("sqlite3").verbose();
 const fs = require("fs");
 
 // Créez une instance de la base de données SQLite ou ouvrez-la si elle existe déjà.
-const db = new sqlite3.Database("DB_MontreSAE.db");
+const db = new sqlite3.Database("ProjetS6.db");
 
 // Lisez le fichier create_tables.sql et exécutez-le
 const createTablesSQL = fs.readFileSync("create_tables.sql", "utf-8");

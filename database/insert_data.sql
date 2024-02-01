@@ -1,55 +1,66 @@
--- Ajout d'exemples d'utilisateurs
-INSERT INTO Utilisateurs (username, password) VALUES ('thomas', 'test');
-INSERT INTO Utilisateurs (username, password) VALUES ('emma', 'test');
-INSERT INTO Utilisateurs (username, password) VALUES ('william', 'test');
+-- Réinsérer les données dans la table parties avec une clé primaire auto-incrémentée
+INSERT INTO parties (texte) VALUES
+    ('Vous vous tenez devant deux portes. Une à gauche et une à droite. Laquelle choisissez-vous ?'),
+    ('Vous entrez dans une pièce sombre. Il y a une torche sur le mur. La prenez-vous ?'),
+    ('Vous allumez la torche et avancez dans la pièce. Vous voyez un coffre au fond. Ouvrez-vous le coffre ?'),
+    ('Vous avancez dans l''obscurité. Soudain, vous trébuchez sur quelque chose et tombez. Vous vous blessez légèrement.'),
+    ('Le coffre est rempli de pièces d''or ! Vous les ramassez et continuez votre aventure.'),
+    ('En ignorant le coffre, vous continuez votre chemin. Rien d''intéressant n''arrive par la suite.'),
+    ('Vous avez trouvé une carte au trésor dans le coffre ! Elle vous guide vers de nouvelles aventures.'),
+    ('Vous vous trouvez face à un passage étroit. Essayez-vous de le traverser ?'),
+    ('Vous découvrez un escalier qui descend dans l''obscurité. Descendez-vous ?'),
+    ('Vous entendez un bruit étrange derrière vous. Vous retournez voir ce que c''est.'),
+    ('Vous trouvez une clé rouillée par terre. La prenez-vous ?'),
+    ('Vous découvrez une trappe secrète sous un tapis. L''ouvrez-vous ?'),
+    ('Vous trouvez une potion mystérieuse dans un coin de la pièce. La buvez-vous ?'),
+    ('Vous croisez un vieux sage assis au coin du feu. Lui parlez-vous ?'),
+    ('Vous entendez des voix chuchoter dans l''obscurité. Cherchez-vous d''où elles viennent ?'),
+    ('Vous découvrez un parchemin ancien sur une étagère. Le prenez-vous ?'),
+    ('Vous trouvez une épée rouillée abandonnée par terre. La ramassez-vous ?'),
+    ('Vous trouvez une porte secrète dissimulée derrière un tableau. L''ouvrez-vous ?'),
+    ('Vous rencontrez un marchand ambulant. Regardez-vous ses marchandises ?'),
+    ('Vous apercevez une lueur au bout du couloir. Vous dirigez-vous vers elle ?');
 
--- Ajout d'exemples de montres pour Thomas
-INSERT INTO Montres (user_id, watch_name, case_id, dial_id, stones_id, bracelet_id, price)
-VALUES (1, 'Montre Classique', 1, 1, 2, 3, 1000.0);
-
-INSERT INTO Montres (user_id, watch_name, case_id, dial_id, stones_id, bracelet_id, price)
-VALUES (1, 'Montre Sportive', 2, 3, 1, 2, 1200.0);
-
-INSERT INTO Montres (user_id, watch_name, case_id, dial_id, stones_id, bracelet_id, price)
-VALUES (1, 'Montre Élégante', 3, 2, 1, 1, 900.0);
-
--- Ajout d'exemples de montres pour Emma
-INSERT INTO Montres (user_id, watch_name, case_id, dial_id, stones_id, bracelet_id, price)
-VALUES (2, 'Montre Décontractée', 3, 2, 1, 1, 900.0);
-
--- Ajout d'exemples de montres pour William
-INSERT INTO Montres (user_id, watch_name, case_id, dial_id, stones_id, bracelet_id, price)
-VALUES (3, 'Montre Sportive', 2, 3, 1, 2, 1200.0);
-
--- Ajout d'exemples de paniers
-INSERT INTO Panier (user_id, cart_name) VALUES (1, 'Panier de Thomas');
-INSERT INTO Panier (user_id, cart_name) VALUES (2, "Panier d'Emma");
-INSERT INTO Panier (user_id, cart_name) VALUES (3, 'Panier de William');
-
--- Ajout d'exemples de montres dans les paniers
-INSERT INTO MontresDansLePanier (cart_id, watch_id)
-VALUES (1, 1);  -- Montre dans le panier de Thomas
-
-INSERT INTO MontresDansLePanier (cart_id, watch_id)
-VALUES (2, 2);  -- Montre dans le panier d'Emma
-
-INSERT INTO MontresDansLePanier (cart_id, watch_id)
-VALUES (3, 3);  -- Montre dans le panier de William
-
-
--- Ajout d'exemples de montres avec leurs composants
-INSERT INTO Montres (watch_name, case, dial, stones, bracelet, metal_price, leather_price, fabric_price)
-VALUES ('Montre Élégante', 'boitier1', 'cadran1', 'rubis', 'metal', 100.0, 120.0, 80.0);
-
-INSERT INTO Montres (watch_name, case, dial, stones, bracelet, metal_price, leather_price, fabric_price)
-VALUES ('Montre Sportive', 'boitier2', 'cadran2', 'diamant', 'cuir', 150.0, 180.0, 120.0);
-
-INSERT INTO Montres (watch_name, case, dial, stones, bracelet, metal_price, leather_price, fabric_price)
-VALUES ('Montre Décontractée', 'boitier3', 'cadran3', 'emeraude', 'tissus', 120.0, 150.0, 100.0);
-
-INSERT INTO Montres (watch_name, case, dial, stones, bracelet, metal_price, leather_price, fabric_price)
-VALUES ('Montre Classique', 'boitier4', 'cadran4', 'saphir', 'metal', 110.0, 130.0, 90.0);
-
-INSERT INTO Montres (watch_name, case, dial, stones, bracelet, metal_price, leather_price, fabric_price)
-VALUES ('Montre Chic', 'boitier5', 'cadran5', 'topaze', 'cuir', 160.0, 190.0, 130.0);
+-- Réinsérer les données dans la table choix avec les clés étrangères correctes vers la table parties
+INSERT INTO choix (partie_id, texte, prochain_partie_id) VALUES
+    (1, 'Porte de gauche', 2),
+    (1, 'Porte de droite', 3),
+    (2, 'Prendre la torche', 4),
+    (2, 'Continuer sans la torche', 5),
+    (3, 'Ouvrir le coffre', 5),
+    (3, 'Ignorer le coffre', 7),
+    (4, 'Se relever et continuer', 6),
+    (4, 'Revenir sur ses pas', 1),
+    (5, 'Continuer l''aventure avec les pièces d''or', 8),
+    (5, 'Rebrousser chemin', 1),
+    (6, 'Continuer votre chemin', 1),
+    (6, 'Explorer la pièce', 9),
+    (7, 'Suivre la carte au trésor', 10),
+    (7, 'Ignorer la carte et continuer', 1),
+    (8, 'Tenter de passer', 11),
+    (8, 'Revenir en arrière', 1),
+    (9, 'Descendre l''escalier', 12),
+    (9, 'Revenir à la pièce précédente', 1),
+    (10, 'Investiguer le bruit', 13),
+    (10, 'Continuer votre route', 1),
+    (11, 'Prendre la clé', 14),
+    (11, 'Ignorer la clé', 1),
+    (12, 'Continuer à descendre', 15),
+    (12, 'Remonter à la surface', 1),
+    (13, 'Chercher la source du bruit', 16),
+    (13, 'Fuir la pièce', 1),
+    (14, 'Ouvrir la trappe', 17),
+    (14, 'Laisser la trappe fermée', 1),
+    (15, 'Explorer les souterrains', 18),
+    (15, 'Revenir à la surface', 1),
+    (16, 'Investiguer la pièce', 19),
+    (16, 'Revenir sur vos pas', 1),
+    (17, 'Boire la potion', 20),
+    (17, 'Jeter la potion', 1),
+    (18, 'Parler au sage', 21),
+    (18, 'Ignorer le sage', 1),
+    (19, 'Tenter de comprendre les voix', 22),
+    (19, 'Quitter la pièce', 1),
+    (20, 'Prendre le parchemin', 23),
+    (20, 'Laisser le parchemin', 1);
 

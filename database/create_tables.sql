@@ -1,6 +1,7 @@
 -- Supprimer les tables existantes si elles existent déjà
 DROP TABLE IF EXISTS parties;
 DROP TABLE IF EXISTS choix;
+DROP TABLE IF EXISTS utilisateurs;
 
 -- Recréer la table parties avec une clé primaire auto-incrémentée
 CREATE TABLE parties (
@@ -17,4 +18,12 @@ CREATE TABLE choix (
     prochain_partie_id INTEGER,
     fin_jeu INTEGER DEFAULT 0, -- Champ pour indiquer si le choix mène à la fin du jeu
     FOREIGN KEY (partie_id) REFERENCES parties(partie_id)
+);
+
+
+-- Créer la table utilisateurs
+CREATE TABLE utilisateurs (
+    utilisateur_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nom_utilisateur TEXT UNIQUE,
+    mot_de_passe TEXT
 );

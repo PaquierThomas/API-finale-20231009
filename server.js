@@ -2,9 +2,13 @@ const express = require("express");
 const sqlite3 = require("sqlite3");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
 
 const app = express();
 const port = 4000;
+app.use(express.json());
+app.use(cookieParser());
 
 app.use(
   cors({
@@ -20,6 +24,146 @@ const db = new sqlite3.Database("./database/ProjetS6.db", (err) => {
     console.error("Error connecting to the database:", err.message);
   } else {
     console.log("Connected to the database");
+  }
+});
+// Endpoint pour l'inscription
+app.post("/api/register", (req, res) => {
+  const { username, password } = req.body;
+
+  // Vérifier si le nom d'utilisateur est déjà utilisé
+  const checkUserQuery =
+    "SELECT COUNT(*) AS count FROM utilisateurs WHERE nom_utilisateur = ?";
+  db.get(checkUserQuery, [username], (err, row) => {
+    if (err) {
+      console.error(
+        "Erreur lors de la vérification du nom d'utilisateur :",
+        err
+      );
+      return res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+
+    if (row.count > 0) {
+      // Le nom d'utilisateur est déjà utilisé
+      return res
+        .status(400)
+        .json({ message: "Ce nom d'utilisateur est déjà pris" });
+    }
+
+    // Insérer un nouvel utilisateur dans la base de données
+    const insertUserQuery =
+      "INSERT INTO utilisateurs (nom_utilisateur, mot_de_passe) VALUES (?, ?)";
+    db.run(insertUserQuery, [username, password], (err) => {
+      if (err) {
+        console.error("Erreur lors de l'insertion de l'utilisateur :", err);
+        return res.status(500).json({ error: "Erreur interne du serveur" });
+      }
+
+      // Utilisateur inscrit avec succès
+      res.status(201).json({ message: "Inscription réussie" });
+    });
+  });
+});
+
+// Endpoint pour l'authentification
+app.post("/api/login", (req, res) => {
+  const { username, password } = req.body;
+
+  // Requête pour vérifier les informations d'identification dans la base de données
+  const sql = `
+        SELECT *
+        FROM utilisateurs
+        WHERE nom_utilisateur = ? AND mot_de_passe = ?;
+    `;
+
+  db.get(sql, [username, password], (err, row) => {
+    if (err) {
+      console.error(
+        "Erreur lors de la vérification des informations d'identification :",
+        err
+      );
+      return res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+
+    if (!row) {
+      // Si les informations d'identification sont incorrectes
+      return res
+        .status(401)
+        .json({ message: "Nom d'utilisateur ou mot de passe incorrect" });
+    }
+
+    // Créer un jeton JWT
+    const token = jwt.sign(
+      { utilisateur_id: row.utilisateur_id },
+      "votre_secret_key"
+    );
+
+    // Envoyer le jeton en tant que cookie
+    res.cookie("jwt", token, { httpOnly: true });
+
+    // Si les informations d'identification sont correctes
+    res.status(200).json({ message: "Connexion réussie" });
+  });
+});
+
+// Middleware pour vérifier l'authentification de l'utilisateur
+function authMiddleware(req, res, next) {
+  // Vérifier si req.cookies est défini
+  if (req.cookies) {
+    // Récupérer le jeton JWT du cookie
+    const token = req.cookies.jwt;
+
+    if (token) {
+      jwt.verify(token, "votre_secret_key", (err, decodedToken) => {
+        if (err) {
+          console.error("Erreur lors de la vérification du jeton :", err);
+          res.clearCookie("jwt");
+          next();
+        } else {
+          // Jeton valide, ajouter les informations d'identification à l'objet de requête
+          req.utilisateur = decodedToken;
+          next();
+        }
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+}
+
+// Endpoint pour vérifier l'état de connexion
+app.get("/api/verify-login", authMiddleware, (req, res) => {
+  // Si l'utilisateur est connecté, renvoyer ses informations d'identification
+  if (req.utilisateur) {
+    res.status(200).json({ utilisateur: req.utilisateur });
+  } else {
+    res.status(401).json({ message: "Utilisateur non connecté" });
+  }
+});
+
+// Endpoint pour récupérer les informations de l'utilisateur connecté
+app.get("/api/user-info", authMiddleware, (req, res) => {
+  // Si l'utilisateur est connecté, renvoyer ses informations d'identification
+  if (req.utilisateur) {
+    const userId = req.utilisateur.utilisateur_id;
+    const sql = "SELECT * FROM utilisateurs WHERE utilisateur_id = ?";
+
+    db.get(sql, [userId], (err, row) => {
+      if (err) {
+        console.error(
+          "Erreur lors de la récupération des informations de l'utilisateur :",
+          err
+        );
+        res.status(500).json({ error: "Erreur interne du serveur" });
+      } else if (!row) {
+        res.status(404).json({ message: "Utilisateur non trouvé" });
+      } else {
+        res.status(200).json({ utilisateur: row });
+      }
+    });
+  } else {
+    res.status(401).json({ message: "Utilisateur non connecté" });
   }
 });
 

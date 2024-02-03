@@ -1,3 +1,9 @@
+-- Insérer des données d'exemple dans la table utilisateurs
+INSERT INTO utilisateurs (nom_utilisateur, mot_de_passe) VALUES
+    ('aurélie', '1234'),
+    ('thomas', 'thomas2'),
+    ('test', 'test');
+
 -- Réinsérer les données dans la table parties avec une clé primaire auto-incrémentée
 INSERT INTO parties (texte) VALUES
     ('Vous vous tenez devant deux portes. Une à gauche et une à droite. Laquelle choisissez-vous ?'),

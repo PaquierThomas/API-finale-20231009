@@ -13,6 +13,8 @@ CREATE TABLE choix (
     choix_id INTEGER PRIMARY KEY AUTOINCREMENT,
     partie_id INTEGER,
     texte TEXT,
+    image_url TEXT, -- Nouvelle colonne pour l'URL de l'image
     prochain_partie_id INTEGER,
+    fin_jeu INTEGER DEFAULT 0, -- Champ pour indiquer si le choix mène à la fin du jeu
     FOREIGN KEY (partie_id) REFERENCES parties(partie_id)
 );

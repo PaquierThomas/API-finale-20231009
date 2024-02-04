@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS parties;
 DROP TABLE IF EXISTS choix;
 DROP TABLE IF EXISTS utilisateurs;
+DROP TABLE IF EXISTS historique;
 
 -- Recréer la table parties avec une clé primaire auto-incrémentée
 CREATE TABLE parties (
@@ -26,4 +27,15 @@ CREATE TABLE utilisateurs (
     utilisateur_id INTEGER PRIMARY KEY AUTOINCREMENT,
     nom_utilisateur TEXT UNIQUE,
     mot_de_passe TEXT
+);
+
+-- Recréer la table historique avec une clé primaire auto-incrémentée
+CREATE TABLE historique (
+    historique_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    utilisateur_id INTEGER,
+    partie_id INTEGER,
+    choix TEXT,
+    date_jouee TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(utilisateur_id),
+    FOREIGN KEY (partie_id) REFERENCES parties(partie_id)
 );

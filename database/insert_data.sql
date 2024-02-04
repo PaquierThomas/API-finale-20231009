@@ -2,7 +2,16 @@
 INSERT INTO utilisateurs (nom_utilisateur, mot_de_passe) VALUES
     ('aurélie', '1234'),
     ('thomas', 'thomas2'),
-    ('test', 'test');
+    ('test', 'test'),
+    ('b','b');
+
+-- Insérer des données d'historique pour l'utilisateur 4
+
+INSERT INTO historique (utilisateur_id, partie_id, choix) VALUES 
+(4, 1, '3,5,7'), 
+(4, 3, '1,3,5'),
+(4, 2, '2,4,6');
+
 
 -- Réinsérer les données dans la table parties avec une clé primaire auto-incrémentée
 INSERT INTO parties (texte) VALUES

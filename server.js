@@ -64,46 +64,33 @@ app.post("/api/register", (req, res) => {
   });
 });
 
-// Endpoint pour l'authentification
-// app.post("/api/login", (req, res) => {
-//   const { username, password } = req.body;
+// Route API pour récupérer les parties jouées par l'utilisateur connecté
+app.get("/api/user-parties", authMiddleware, (req, res) => {
+  if (!req.utilisateur) {
+    return res
+      .status(401)
+      .json({ message: "L'utilisateur n'est pas authentifié." });
+  }
 
-//   // Requête pour vérifier les informations d'identification dans la base de données
-//   const sql = `
-//         SELECT *
-//         FROM utilisateurs
-//         WHERE nom_utilisateur = ? AND mot_de_passe = ?;
-//     `;
+  const userId = req.utilisateur.utilisateur_id; // Obtenez l'ID de l'utilisateur connecté à partir du jeton JWT
+  // Sélectionnez les parties jouées par l'utilisateur connecté à partir de la base de données
+  db.all(
+    "SELECT * FROM historique WHERE utilisateur_id = ?",
+    [userId],
+    (err, rows) => {
+      if (err) {
+        console.error("Erreur lors de la récupération des parties :", err);
+        res.status(500).json({
+          message:
+            "Erreur lors de la récupération des parties jouées par l'utilisateur.",
+        });
+        return;
+      }
+      res.json({ parties: rows });
+    }
+  );
+});
 
-//   db.get(sql, [username, password], (err, row) => {
-//     if (err) {
-//       console.error(
-//         "Erreur lors de la vérification des informations d'identification :",
-//         err
-//       );
-//       return res.status(500).json({ error: "Erreur interne du serveur" });
-//     }
-
-//     if (!row) {
-//       // Si les informations d'identification sont incorrectes
-//       return res
-//         .status(401)
-//         .json({ message: "Nom d'utilisateur ou mot de passe incorrect" });
-//     }
-
-//     // Créer un jeton JWT
-//     const token = jwt.sign(
-//       { utilisateur_id: row.utilisateur_id },
-//       "votre_secret_key"
-//     );
-
-//     // Envoyer le jeton en tant que cookie
-//     res.cookie("jwt", token, { httpOnly: true });
-
-//     // Si les informations d'identification sont correctes
-//     res.status(200).json({ message: "Connexion réussie" });
-//   });
-// });
 // Middleware pour vérifier l'authentification de l'utilisateur
 function authMiddleware(req, res, next) {
   // Vérifier si le jeton JWT est présent dans les cookies
@@ -125,6 +112,39 @@ function authMiddleware(req, res, next) {
     next();
   }
 }
+
+app.post("/api/ajouter-partie-historique", authMiddleware, (req, res) => {
+  // Vérifier si l'utilisateur est authentifié avant d'ajouter la partie à l'historique
+  if (!req.utilisateur) {
+    return res
+      .status(401)
+      .json({ message: "L'utilisateur n'est pas authentifié." });
+  }
+
+  const userId = req.utilisateur.utilisateur_id; // Obtenez l'ID de l'utilisateur connecté à partir du jeton JWT
+  const { partie_id, choix } = req.body; // Ajoutez la récupération des choix depuis le corps de la requête
+
+  // Ajoutez la partie à l'historique de l'utilisateur dans la base de données avec les choix
+  db.run(
+    "INSERT INTO historique (utilisateur_id, partie_id, choix) VALUES (?, ?, ?)", // Modifiez la requête pour inclure les données de choix
+    [userId, partie_id, choix], // Ajoutez les données de choix dans les valeurs à insérer dans la base de données
+    (err) => {
+      if (err) {
+        console.error(
+          "Erreur lors de l'ajout de la partie à l'historique :",
+          err
+        );
+        return res.status(500).json({
+          message:
+            "Erreur lors de l'ajout de la partie à l'historique de l'utilisateur.",
+        });
+      }
+      res.json({
+        message: "Partie ajoutée à l'historique de l'utilisateur avec succès.",
+      });
+    }
+  );
+});
 
 // Endpoint pour l'authentification
 app.post("/api/login", (req, res) => {

@@ -8,9 +8,11 @@ INSERT INTO utilisateurs (nom_utilisateur, mot_de_passe) VALUES
 -- Insérer des données d'historique pour l'utilisateur 4
 
 INSERT INTO historique (utilisateur_id, partie_id, choix) VALUES 
-(4, 1, '3,5,7'), 
-(4, 3, '1,3,5'),
-(4, 2, '2,4,6');
+(4, 1, '[2,5,9,15,21,27,33,39]'), 
+(4, 3, '[2,6,13,19,26,2,5,9,15,21,27,33,39]'),
+(4, 2, '[2,5,9,15,21,27,33,39]'),
+(4, 4, '[2,6,13,19,25,31,37,38,1,3,7,11,1,3,7,11,2,5,9,15,21,27,33,39]');
+
 
 
 -- Réinsérer les données dans la table parties avec une clé primaire auto-incrémentée
@@ -80,6 +82,7 @@ INSERT INTO choix (partie_id, texte, image_url, prochain_partie_id, fin_jeu) VAL
     (19, 'Tenter de comprendre les voix', 'robot.png', 22, 0),
     (19, 'Quitter la pièce', 'alien.png', 1, 0),
     (20, 'Prendre le parchemin', 'robot.png', 21, 1),
+    (20, 'Laisser le parchemin', 'alien.png', 22, 1),
     (20, 'Laisser le parchemin', 'alien.png', 22, 1),
     (21, 'Recommencer la partie', 'robot.png', 1, 0);
 

@@ -146,6 +146,62 @@ app.post("/api/ajouter-partie-historique", authMiddleware, (req, res) => {
   );
 });
 
+// SELECT c.texte AS choix_texte, p.texte AS partie_texte
+//       FROM choix c
+//       JOIN parties p ON c.prochain_partie_id = p.partie_id
+//       WHERE p.partie_id = ?;
+
+// Route API pour récupérer les statistiques des choix pour chaque embranchement
+app.get("/api/stats-embranchements", (req, res) => {
+  // Requête SQL pour récupérer tous les embranchements distincts présents dans la table choix
+
+  db.all("SELECT partie_id, choix FROM historique", (err, results) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    const choices = results
+      .map((r) => JSON.parse(r.choix))
+      .flat()
+      .reduce(
+        (acc, curr) => ({
+          ...acc,
+          [curr]: (acc[curr] || 0) + 1,
+        }),
+        {}
+      );
+
+    db.all(
+      "SELECT parties.partie_id, parties.texte AS partie_text, json_object('ids', json_group_array(choix.choix_id), 'textes', json_group_array(choix.texte)) AS choix FROM parties LEFT JOIN choix ON parties.partie_id = choix.partie_id GROUP BY parties.partie_id",
+      (err, parties) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+
+        const results = parties.map((p) => {
+          const parsedChoix = JSON.parse(p.choix);
+
+          const choix = parsedChoix.ids.map((id, index) => ({
+            id,
+            text: parsedChoix.textes[index],
+            total: choices[id] || 0,
+          }));
+
+          return {
+            ...p,
+            choix,
+            totalChoix: choix.reduce((acc, curr) => acc + curr.total, 0),
+          };
+        });
+
+        return res.status(200).json(results);
+      }
+    );
+  });
+});
+
 // Endpoint pour l'authentification
 app.post("/api/login", (req, res) => {
   const { username, password } = req.body;
@@ -286,7 +342,7 @@ app.get("/api/fin-jeu/:partieId", (req, res) => {
       SELECT c.texte AS choix_texte, p.texte AS partie_texte
       FROM choix c
       JOIN parties p ON c.prochain_partie_id = p.partie_id
-      WHERE p.partie_id = ?; // Modifier le critère de sélection pour utiliser la partie_id
+      WHERE p.partie_id = ?; 
     `;
 
   db.get(sql, [partieId], (err, row) => {

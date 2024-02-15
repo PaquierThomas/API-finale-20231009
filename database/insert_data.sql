@@ -17,8 +17,8 @@ INSERT INTO historique (utilisateur_id, partie_id, choix) VALUES
 
 -- Réinsérer les données dans la table parties avec une clé primaire auto-incrémentée
 INSERT INTO parties (texte) VALUES
-    ('Vous vous tenez devant deux portes. Une à gauche et une à droite. Laquelle choisissez-vous ?'),
-    ('Vous entrez dans une pièce sombre. Il y a une torche sur le mur. La prenez-vous ?'),
+    ("In a distant galaxy, Dylan Falco embarks on a study abroad program, seeking adventure and knowledge. Little does he know, his journey will intertwine with the fate of two unlikely characters: XB-3, a fugitive robotic AI, and Khon, a mysterious alien thats hunts down XB-3."),
+    ('As Dylan settles into his new surroundings, he stumbles upon a robot, fleeing from an unknown threat. Will he offer assistance to the desperate robot, or turn a blind eye to its plight?'),
     ('Vous allumez la torche et avancez dans la pièce. Vous voyez un coffre au fond. Ouvrez-vous le coffre ?'),
     ('Vous avancez dans l''obscurité. Soudain, vous trébuchez sur quelque chose et tombez. Vous vous blessez légèrement.'),
     ('Le coffre est rempli de pièces d''or ! Vous les ramassez et continuez votre aventure.'),
@@ -43,10 +43,9 @@ INSERT INTO parties (texte) VALUES
 
 -- Réinsérer les données dans la table choix avec les clés étrangères correctes vers la table parties
 INSERT INTO choix (partie_id, texte, image_url, prochain_partie_id, fin_jeu) VALUES
-    (1, 'Porte de gauche', 'unknow.svg', 2, 0),
-    (1, 'Porte de droite', 'alien.svg', 3, 0),
-    (2, 'Prendre la torche', 'neutral.svg', 4, 0),
-    (2, 'Continuer sans la torche', 'soul.svg', 5, 0),
+    (1, 'Start', 'unknow.svg', 2, 0),
+    (2, 'Aid the robot', 'walle.svg', 3, 0),
+    (2, 'Turn a blind eye to the situation', 'unknow.svg', 4, 0),
     (3, 'Ouvrir le coffre', 'walle.svg', 5, 0),
     (3, 'Ignorer le coffre', 'soul.svg', 7, 0),
     (4, 'Se relever et continuer', 'soul.svg', 6, 0),

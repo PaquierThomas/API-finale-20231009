@@ -195,7 +195,6 @@ app.get("/api/stats-embranchements", (req, res) => {
             totalChoix: choix.reduce((acc, curr) => acc + curr.total, 0),
           };
         });
-
         return res.status(200).json(results);
       }
     );

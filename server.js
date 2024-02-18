@@ -94,6 +94,7 @@ app.get("/api/user-parties", authMiddleware, (req, res) => {
 // Middleware pour vérifier l'authentification de l'utilisateur
 function authMiddleware(req, res, next) {
   // Vérifier si le jeton JWT est présent dans les cookies
+
   const token = req.cookies.jwt;
 
   if (token) {
@@ -115,12 +116,13 @@ function authMiddleware(req, res, next) {
 
 app.post("/api/ajouter-partie-historique", authMiddleware, (req, res) => {
   // Vérifier si l'utilisateur est authentifié avant d'ajouter la partie à l'historique
+  console.log(req.body);
+  console.log(req.utilisateur);
   if (!req.utilisateur) {
     return res
       .status(401)
       .json({ message: "L'utilisateur n'est pas authentifié." });
   }
-
   const userId = req.utilisateur.utilisateur_id; // Obtenez l'ID de l'utilisateur connecté à partir du jeton JWT
   const { partie_id, choix } = req.body; // Ajoutez la récupération des choix depuis le corps de la requête
 

@@ -193,8 +193,8 @@ INSERT INTO choix (partie_id, texte, image_url, prochain_partie_id, fin_jeu) VAL
 (30, 'Rejoindre ses camarades', 'soul.svg', 31, 0),
 (31, 'Participer à une cérémonie de récompense en leur honneur', 'walle.svg', 32, 0),
 (31, 'Retourner à leur vie quotidienne avec un sentiment de satisfaction accomplie', 'neutrala.svg', 54, 0),
-(32, 'Organiser une fête pour célébrer leur victoire', 'neutrala.svg', 55, 0),
-(32, 'Discuter des leçons apprises et des souvenirs de leur aventure', 'neutrala.svg', 56, 0);
+(32, 'Organiser une fête pour célébrer leur victoire', 'neutrala.svg', 55, 1),
+(32, 'Discuter des leçons apprises et des souvenirs de leur aventure', 'neutrala.svg', 56, 1);
 
 
 
